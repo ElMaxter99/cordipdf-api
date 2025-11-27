@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const buildMongoUri = () => {
-  const { MONGO_URI, MONGO_HOST = 'localhost', MONGO_PORT = '27017', MONGO_DB = 'miapp' } =
+  const { MONGO_URI, MONGO_HOST = 'mongo', MONGO_PORT = '27017', MONGO_DB = 'miapp' } =
     process.env;
 
   return MONGO_URI || `mongodb://${MONGO_HOST}:${MONGO_PORT}/${MONGO_DB}`;
@@ -18,10 +18,7 @@ const connectDB = async () => {
   }
 
   try {
-    await mongoose.connect(uri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect(uri);
     console.log('Conectado a MongoDB');
   } catch (error) {
     console.error('Error al conectar a MongoDB', error);
