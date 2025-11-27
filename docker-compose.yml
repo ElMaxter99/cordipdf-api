@@ -19,7 +19,7 @@ services:
     restart: unless-stopped
 
   mongo:
-    image: mongo:7.0
+    image: ${MONGO_IMAGE:-mongo:8.0}
     container_name: cordipdf-mongo
     restart: unless-stopped
     ports:
