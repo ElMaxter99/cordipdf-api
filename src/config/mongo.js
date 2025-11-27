@@ -1,10 +1,20 @@
 const mongoose = require('mongoose');
 
-const connectDB = async () => {
-  const uri = process.env.MONGO_URI;
+const buildMongoUri = () => {
+  const { MONGO_URI, MONGO_HOST = 'localhost', MONGO_PORT = '27017', MONGO_DB = 'miapp' } =
+    process.env;
 
-  if (!uri) {
-    throw new Error('MONGO_URI no está definido en las variables de entorno');
+  return MONGO_URI || `mongodb://${MONGO_HOST}:${MONGO_PORT}/${MONGO_DB}`;
+};
+
+const connectDB = async () => {
+  const uri = buildMongoUri();
+
+  try {
+    const { host, pathname } = new URL(uri);
+    console.log(`[Startup] Conectando a MongoDB en ${host}${pathname}`);
+  } catch (parseError) {
+    console.warn('[Startup] No se pudo parsear la URI de MongoDB para logging');
   }
 
   try {

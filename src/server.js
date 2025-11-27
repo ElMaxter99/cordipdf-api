@@ -24,6 +24,7 @@ app.use(errorHandler);
 const startServer = async () => {
   const port = process.env.PORT || 3000;
   await connectDB();
+  console.log(`[Startup] Iniciando API en el puerto ${port}`);
   app.listen(port, () => {
     console.log(`Servidor escuchando en el puerto ${port}`);
   });
