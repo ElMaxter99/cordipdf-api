@@ -4,7 +4,13 @@ const buildMongoUri = () => {
   const { MONGO_URI, MONGO_HOST = 'mongo', MONGO_PORT = '27017', MONGO_DB = 'miapp' } =
     process.env;
 
-  return MONGO_URI || `mongodb://${MONGO_HOST}:${MONGO_PORT}/${MONGO_DB}`;
+  const rawUri = (MONGO_URI || '').trim();
+  if (rawUri) {
+    const hasScheme = /^mongodb(\+srv)?:\/\//i.test(rawUri);
+    return hasScheme ? rawUri : `mongodb://${rawUri}`;
+  }
+
+  return `mongodb://${MONGO_HOST}:${MONGO_PORT}/${MONGO_DB}`;
 };
 
 const connectDB = async () => {
