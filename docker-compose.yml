@@ -23,6 +23,7 @@ services:
     image: ${MONGO_IMAGE:-mongo:8.0}
     container_name: cordipdf-mongo
     restart: unless-stopped
+    command: ["mongod", "--port", "${MONGO_PORT:-23023}"]
     ports:
       - "${MONGO_PORT:-23023}:${MONGO_PORT:-23023}"
     volumes:
