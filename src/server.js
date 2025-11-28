@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const { connectDB } = require('./config/mongo');
+const { initMongo } = require('./config/mongo');
+const { env } = require('./config');
 const routes = require('./routes');
 const logger = require('./middlewares/logger');
 const auth = require('./middlewares/auth');
@@ -22,8 +23,8 @@ app.use((req, res, next) => {
 app.use(errorHandler);
 
 const startServer = async () => {
-  const port = process.env.PORT || 3000;
-  await connectDB();
+  const port = env.PORT || 3000;
+  await initMongo();
   console.log(`[Startup] Iniciando API en el puerto ${port}`);
   app.listen(port, () => {
     console.log(`Servidor escuchando en el puerto ${port}`);
