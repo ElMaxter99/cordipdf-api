@@ -1,35 +1,21 @@
 const mongoose = require('mongoose');
+const { env } = require('.');
+const { logger } = require('../utils/logger');
 
-const buildMongoUri = () => {
-  const { MONGO_URI, MONGO_HOST = 'mongo', MONGO_PORT = '27017', MONGO_DB = 'miapp' } =
-    process.env;
-
-  const rawUri = (MONGO_URI || '').trim();
-  if (rawUri) {
-    const hasScheme = /^mongodb(\+srv)?:\/\//i.test(rawUri);
-    return hasScheme ? rawUri : `mongodb://${rawUri}`;
-  }
-
-  return `mongodb://${MONGO_HOST}:${MONGO_PORT}/${MONGO_DB}`;
-};
-
-const connectDB = async () => {
-  const uri = buildMongoUri();
+async function initMongo() {
+  mongoose.set('strictQuery', true);
+  mongoose.set('toJSON', { virtuals: true });
 
   try {
-    const { host, pathname } = new URL(uri);
-    console.log(`[Startup] Conectando a MongoDB en ${host}${pathname}`);
-  } catch (parseError) {
-    console.warn('[Startup] No se pudo parsear la URI de MongoDB para logging');
-  }
-
-  try {
-    await mongoose.connect(uri);
-    console.log('Conectado a MongoDB');
+    await mongoose.connect(env.MONGO_URI);
+    logger.info('MongoDB connection established');
+    return mongoose;
   } catch (error) {
-    console.error('Error al conectar a MongoDB', error);
-    process.exit(1);
+    logger.error('MongoDB connection failed', error);
+    throw error;
   }
-};
+}
 
-module.exports = { connectDB };
+module.exports = {
+  initMongo,
+};
